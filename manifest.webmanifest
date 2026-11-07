@@ -1,0 +1,15 @@
+{
+  "name": "Books Track",
+  "short_name": "Books Track",
+  "description": "Catat buku yang sedang kamu baca, sampai halaman berapa, catatan dan kutipan.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f5f1",
+  "theme_color": "#1f6f54",
+  "lang": "id",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

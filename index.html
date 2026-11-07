@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Books Track</title>
+  <meta name="description" content="Books Track — catat buku yang sedang kamu baca, sampai halaman berapa, catatan, dan kutipan. Cepat dan mudah dari HP.">
+  <meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121614" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Books Track">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar / bottom tab bar -->
+    <nav class="tabbar" aria-label="Navigasi utama">
+      <div class="side-brand">
+        <img src="icon.svg" alt="" width="32" height="32">
+        <span>Books Track</span>
+      </div>
+      <button class="tab-item active" data-view="home">
+        <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+        <span>Beranda</span>
+      </button>
+      <button class="tab-item" data-view="library">
+        <svg viewBox="0 0 24 24"><path d="M4 4h3.5v16H4zM9.5 4H13v16H9.5zM15 5.2l3.3-.9 3.4 14.9-3.3.9z"/></svg>
+        <span>Rak</span>
+      </button>
+      <button class="tab-fab" id="fabBtn" aria-label="Catat bacaan">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="fab-label">Catat Bacaan</span>
+      </button>
+      <button class="tab-item" data-view="stats">
+        <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        <span>Statistik</span>
+      </button>
+      <button class="tab-item" data-view="settings">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+        <span>Lainnya</span>
+      </button>
+    </nav>
+
+    <main class="main">
+      <!-- HOME -->
+      <section id="view-home" class="view active">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow" id="todayLabel"></p>
+            <h1 id="greeting">Halo</h1>
+          </div>
+          <button class="icon-btn" id="themeBtn" aria-label="Ganti tema">
+            <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          </button>
+        </header>
+
+        <div class="today-card" id="todayCard"></div>
+        <div id="reminder"></div>
+
+        <div class="section-head">
+          <h2>Sedang dibaca</h2>
+          <button class="link-btn" data-goto="library" data-status="reading">Lihat semua</button>
+        </div>
+        <div id="readingList" class="reading-list"></div>
+
+        <div id="upNextWrap">
+          <div class="section-head">
+            <h2>Berikutnya</h2>
+            <button class="link-btn" data-goto="library" data-status="want">Lihat semua</button>
+          </div>
+          <div id="upNext" class="shelf-row"></div>
+        </div>
+      </section>
+
+      <!-- LIBRARY -->
+      <section id="view-library" class="view">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">Koleksi</p>
+            <h1>Rak Buku</h1>
+          </div>
+          <button class="btn primary sm desktop-only" data-action="add">+ Tambah buku</button>
+        </header>
+        <div class="search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="searchInput" type="search" placeholder="Cari judul, penulis, genre…" autocomplete="off">
+        </div>
+        <div class="chips" id="statusChips">
+          <button class="chip-btn active" data-status="all">Semua <b data-count="all"></b></button>
+          <button class="chip-btn" data-status="reading">Dibaca <b data-count="reading"></b></button>
+          <button class="chip-btn" data-status="want">Ingin dibaca <b data-count="want"></b></button>
+          <button class="chip-btn" data-status="finished">Selesai <b data-count="finished"></b></button>
+          <button class="chip-btn" data-status="paused">Ditunda <b data-count="paused"></b></button>
+          <button class="chip-btn" data-status="dnf">Berhenti <b data-count="dnf"></b></button>
+        </div>
+        <div class="list-tools">
+          <span class="muted" id="resultCount"></span>
+          <select id="sortSelect" aria-label="Urutkan">
+            <option value="updated">Terbaru diperbarui</option>
+            <option value="title">Judul A–Z</option>
+            <option value="author">Penulis A–Z</option>
+            <option value="progress">Progres</option>
+            <option value="rating">Rating</option>
+            <option value="added">Baru ditambahkan</option>
+          </select>
+        </div>
+        <div id="bookList" class="book-list"></div>
+      </section>
+
+      <!-- STATS -->
+      <section id="view-stats" class="view">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">Perjalanan membacamu</p>
+            <h1>Statistik</h1>
+          </div>
+        </header>
+        <div class="stat-grid" id="statGrid"></div>
+        <div class="card">
+          <h3>Halaman per hari <span class="muted">· 14 hari</span></h3>
+          <div id="chartDays" class="bars"></div>
+        </div>
+        <div class="card">
+          <h3>Buku selesai <span class="muted" id="yearLabel"></span></h3>
+          <div id="chartMonths" class="bars months"></div>
+        </div>
+        <div class="card">
+          <h3>Genre favorit</h3>
+          <div id="genreList" class="rank-list"></div>
+        </div>
+        <div class="card">
+          <h3>Riwayat terbaru</h3>
+          <div id="activityList" class="timeline"></div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section id="view-settings" class="view">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">Pengaturan</p>
+            <h1>Lainnya</h1>
+          </div>
+        </header>
+        <div class="card">
+          <h3>Target membaca</h3>
+          <div class="field-row">
+            <label class="field"><span>Halaman per hari</span><input id="goalDaily" type="number" inputmode="numeric" min="0"></label>
+            <label class="field"><span>Buku per tahun</span><input id="goalYearly" type="number" inputmode="numeric" min="0"></label>
+          </div>
+          <label class="field"><span>Ingatkan jika tidak mencatat selama (hari)</span><input id="remindDays" type="number" inputmode="numeric" min="1"></label>
+          <button id="saveGoals" class="btn primary block">Simpan target</button>
+        </div>
+        <div class="card">
+          <h3>Tampilan</h3>
+          <div class="segmented" id="themeSeg">
+            <button data-theme-set="auto">Otomatis</button>
+            <button data-theme-set="light">Terang</button>
+            <button data-theme-set="dark">Gelap</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Cadangan data</h3>
+          <p class="muted small">Data tersimpan di perangkat ini saja. Ekspor secara berkala, atau untuk pindah ke HP lain.</p>
+          <div class="menu-list">
+            <button id="exportBtn"><span>Ekspor cadangan (JSON)</span><i>›</i></button>
+            <button id="exportCsvBtn"><span>Ekspor ke Excel (CSV)</span><i>›</i></button>
+            <label><span>Impor cadangan</span><i>›</i><input id="importInput" type="file" accept="application/json,.json" hidden></label>
+            <button id="clearBtn" class="danger"><span>Hapus semua data</span><i>›</i></button>
+          </div>
+        </div>
+        <div class="card" id="installCard">
+          <h3>Pasang di HP</h3>
+          <p class="muted small">Buka situs ini di browser HP → menu <b>⋮</b> atau <b>Bagikan</b> → <b>Tambahkan ke Layar Utama</b>. Books Track akan terbuka seperti aplikasi dan tetap bisa dipakai tanpa internet.</p>
+          <button id="installBtn" class="btn block hidden">Pasang aplikasi</button>
+        </div>
+        <p class="muted small center">Books Track · data disimpan lokal · sampul dari Open Library</p>
+      </section>
+    </main>
+  </div>
+
+  <!-- PICK SHEET (FAB) -->
+  <dialog id="pickSheet" class="sheet">
+    <div class="sheet-grip"></div>
+    <div class="sheet-head"><h2>Catat bacaan</h2><button class="icon-btn" data-close aria-label="Tutup">✕</button></div>
+    <div class="sheet-body">
+      <p class="muted small">Pilih buku yang baru kamu baca</p>
+      <div id="pickList" class="pick-list"></div>
+      <button class="btn block outline" data-action="add">＋ Tambah buku baru</button>
+    </div>
+  </dialog>
+
+  <!-- QUICK LOG SHEET -->
+  <dialog id="logSheet" class="sheet">
+    <form id="logForm" method="dialog">
+      <div class="sheet-grip"></div>
+      <div class="sheet-head">
+        <div class="log-book" id="logBook"></div>
+        <button type="button" class="icon-btn" data-close aria-label="Tutup">✕</button>
+      </div>
+      <div class="sheet-body">
+        <p class="log-q">Sampai halaman berapa?</p>
+        <div class="stepper">
+          <button type="button" class="step-btn" data-step="-1" aria-label="Kurangi">−</button>
+          <input id="logPage" type="number" inputmode="numeric" min="0" aria-label="Halaman">
+          <button type="button" class="step-btn" data-step="1" aria-label="Tambah">+</button>
+        </div>
+        <p class="log-sub" id="logSub"></p>
+        <div class="quick-adds">
+          <button type="button" data-add="5">+5</button>
+          <button type="button" data-add="10">+10</button>
+          <button type="button" data-add="20">+20</button>
+          <button type="button" data-add="50">+50</button>
+          <button type="button" data-finish>Tamat</button>
+        </div>
+
+        <div class="timer-row">
+          <div>
+            <span class="muted small">Lama membaca</span>
+            <div class="timer-val"><span id="timerDisplay">00:00</span></div>
+          </div>
+          <input name="minutes" type="number" inputmode="numeric" min="0" placeholder="menit" aria-label="Menit">
+          <button type="button" id="timerBtn" class="btn sm">▶ Timer</button>
+        </div>
+
+        <details class="more">
+          <summary>Tambah catatan & detail <span class="muted">(opsional)</span></summary>
+          <label class="field"><span>Catatan singkat</span><textarea name="note" rows="2" placeholder="Apa yang terjadi di bagian ini?"></textarea></label>
+          <div class="field-row">
+            <label class="field"><span>Tanggal</span><input name="date" type="date" required></label>
+            <label class="field"><span>Mulai dari hlm</span><input name="fromPage" type="number" inputmode="numeric" min="0"></label>
+          </div>
+          <label class="field"><span>Di mana membaca?</span><input name="place" placeholder="mis. Kereta, kamar, kafe"></label>
+          <span class="field-label">Perasaan saat membaca</span>
+          <div class="mood-row" id="moodRow">
+            <button type="button" data-mood="😊">😊</button><button type="button" data-mood="🤩">🤩</button>
+            <button type="button" data-mood="😌">😌</button><button type="button" data-mood="🤔">🤔</button>
+            <button type="button" data-mood="😢">😢</button><button type="button" data-mood="😴">😴</button>
+          </div>
+          <input type="hidden" name="mood">
+        </details>
+      </div>
+      <div class="sheet-foot">
+        <button type="submit" class="btn primary block lg">Simpan</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- BOOK FORM SHEET -->
+  <dialog id="bookSheet" class="sheet tall">
+    <form id="bookForm" method="dialog">
+      <div class="sheet-grip"></div>
+      <div class="sheet-head"><h2 id="bookFormTitle">Tambah buku</h2><button type="button" class="icon-btn" data-close aria-label="Tutup">✕</button></div>
+      <div class="sheet-body">
+        <div class="search lookup">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="lookupInput" type="search" placeholder="Cari judul atau ISBN untuk isi otomatis" enterkeyhint="search" autocomplete="off">
+          <button type="button" id="lookupBtn" class="btn sm primary">Cari</button>
+        </div>
+        <div id="lookupResults" class="lookup-results"></div>
+
+        <div class="form-top">
+          <div class="cover-preview" id="coverPreview"><span>Sampul</span></div>
+          <div class="form-top-fields">
+            <label class="field"><span>Judul buku *</span><input name="title" required autocomplete="off"></label>
+            <label class="field"><span>Penulis</span><input name="author" autocomplete="off"></label>
+          </div>
+        </div>
+
+        <span class="field-label">Status</span>
+        <div class="segmented wrap" id="statusSeg">
+          <button type="button" data-v="reading">Sedang dibaca</button>
+          <button type="button" data-v="want">Ingin dibaca</button>
+          <button type="button" data-v="finished">Selesai</button>
+          <button type="button" data-v="paused">Ditunda</button>
+          <button type="button" data-v="dnf">Berhenti</button>
+        </div>
+        <input type="hidden" name="status">
+
+        <div class="field-row">
+          <label class="field"><span>Total halaman</span><input name="totalPages" type="number" inputmode="numeric" min="0"></label>
+          <label class="field"><span>Halaman sekarang</span><input name="currentPage" type="number" inputmode="numeric" min="0"></label>
+        </div>
+
+        <span class="field-label">Format</span>
+        <div class="segmented" id="formatSeg">
+          <button type="button" data-v="physical">📖 Fisik</button>
+          <button type="button" data-v="ebook">📱 E-book</button>
+          <button type="button" data-v="audiobook">🎧 Audio</button>
+        </div>
+        <input type="hidden" name="format">
+
+        <details class="more" id="moreDetails">
+          <summary>Detail lainnya <span class="muted">(tanggal, genre, ISBN, rating…)</span></summary>
+          <div class="field-row">
+            <label class="field"><span>Tanggal mulai</span><input name="startDate" type="date"></label>
+            <label class="field"><span>Tanggal selesai</span><input name="finishDate" type="date"></label>
+          </div>
+          <div class="field-row">
+            <label class="field"><span>Genre</span><input name="genre" placeholder="Fiksi, Sejarah"></label>
+            <label class="field"><span>Tag</span><input name="tags" placeholder="pisah dengan koma"></label>
+          </div>
+          <div class="field-row">
+            <label class="field"><span>Penerbit</span><input name="publisher"></label>
+            <label class="field"><span>Tahun terbit</span><input name="year" type="number" inputmode="numeric"></label>
+          </div>
+          <div class="field-row">
+            <label class="field"><span>ISBN</span><input name="isbn" inputmode="numeric"></label>
+            <label class="field"><span>Bahasa</span><input name="language" placeholder="Indonesia"></label>
+          </div>
+          <div class="field-row">
+            <label class="field"><span>Asal buku</span><input name="source" placeholder="Beli / pinjam dari…"></label>
+            <label class="field"><span>Tanggal kembali</span><input name="returnDate" type="date"></label>
+          </div>
+          <label class="field"><span>Link gambar sampul</span><input name="cover" type="url" placeholder="https://…"></label>
+          <span class="field-label">Rating</span>
+          <div class="star-input" id="starInput"></div>
+          <input type="hidden" name="rating">
+          <label class="field"><span>Ulasan / kesan</span><textarea name="review" rows="3"></textarea></label>
+        </details>
+      </div>
+      <div class="sheet-foot">
+        <button type="submit" class="btn primary block lg">Simpan buku</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- DETAIL SHEET -->
+  <dialog id="detailSheet" class="sheet full">
+    <div id="detailContent"></div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
